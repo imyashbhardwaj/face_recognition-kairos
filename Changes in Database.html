@@ -1,0 +1,102 @@
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+<center>
+<h1><u>&nbsp;Operations in gallery&nbsp;</u></h1><br>
+<!--Fill in the details to add images to your gallery:<br><br>-->
+For API reference <a href=https://kairos.docs.apiary.io/#reference/face-recognition/detect/post>click here</a>.<br><br>
+</center>
+<table align='center'>
+<tr><td>Enter API request url:</td><td>
+<select id=select>
+  <option value="https://api.kairos.com/enroll">Enroll</option>
+  <option value="https://api.kairos.com/verify">Verify</option>
+  <option value="https://api.kairos.com/recognize">Recognize</option>
+  <option value="https://api.kairos.com/gallery/view">Gallery view</option>
+  <option value="https://api.kairos.com/gallery/view_subject">Gallery view_subject</option>
+  <option value="https://api.kairos.com/gallery/remove_subject">Gallery remove_subject</option>
+  <option value="https://api.kairos.com/gallery/remove">Gallery remove</option>
+</select>
+
+</td></tr>
+<tr><td>Image-url:</td><td><input type=url id=url></td></tr>
+<tr><td>Subject id:</td><td><input type=text id=sub_id></td></tr>
+<tr><td>Gallery name:</td><td><input type=text id=gal_name></td></tr>
+<tr><td>Face id(Only if required):</td><td><input type=text id=face_id></td></tr>
+</table><br>
+<button id=send class="btn btn-success">Send</button>
+<br>
+<center id=result>
+
+</center>
+</body>
+
+<style>
+
+h1{
+color:orange;
+}
+body{
+background-image: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%);
+font-family:"Comic Sans MS";
+font-size:20px;
+}
+button{
+margin-left:63%;
+}
+</style>
+
+
+<script language=JavaScript>
+//alert("something");
+$("#send").click(function(){
+var req_url=document.getElementById("select").value;
+var img_url=document.getElementById("url").value;
+var gal_name=document.getElementById("gal_name").value;
+var sub_id=document.getElementById("sub_id").value;
+var face_id=document.getElementById("face_id").value;
+var data={
+	image:img_url,	
+	subject_id:sub_id,
+	gallery_name:gal_name,
+	face_id:face_id
+}
+
+$.ajax({
+            url: req_url,
+            
+			beforeSend: function(xhrObj){
+                // Request headers
+                xhrObj.setRequestHeader("Content-Type","application/json");
+                xhrObj.setRequestHeader('app_id', '*****');//change with id
+				xhrObj.setRequestHeader('app_key', '*******');//change with key
+            },
+			//crossDomain: true,
+            type: "POST",
+            // Request body
+            data:JSON.stringify(data) 
+        })
+        .done(function(data) {
+            console.log("success");
+			console.log(JSON.stringify(data));
+			if(!data.Errors){
+				$("#result").html("Request processed successfully");
+			}
+			else{
+				$("#result").html("there is some error");
+			}
+		})
+        .fail(function() {
+            console.log("error");
+			$("#result").html("there is some error");
+        });
+});    
+</script>

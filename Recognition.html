@@ -1,0 +1,186 @@
+
+<head>
+<title>Face Recognition</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+<center>
+<h1><u>&nbsp;Face Recognition&nbsp;</u></h1>
+</center><br>
+<div class=row>
+
+<div class=box>
+<div class="col-md-2">
+<center>
+<img src=https://fm.cnbc.com/applications/cnbc.com/resources/img/editorial/2018/05/02/105178315-Jeff_Bezos_close_up.1910x1000.jpg>
+<br>Jeff bezos
+<img src=https://images.financialexpress.com/2018/01/shah-rukh-khan-75915.jpg>
+<br>Shah rukh Khan
+<img src=https://i.pinimg.com/736x/d4/ea/86/d4ea864374567993be2d39bd765e5dfb--robert-downey-jr-iron-man-robert-downey-jr.jpg>
+<br>Rober Downey Jr.
+</center>
+</div>
+<div class="col-md-2">
+<center>
+<img src=https://www.biography.com/.image/t_share/MTQ1NDY2OTk4Njk5MDc1MzQ1/mark-zuckerberg---mini-biography.jpg>
+<br>Mark Zuckerberg
+<img src=https://secure.i.telegraph.co.uk/multimedia/archive/03444/Carly-Fiorina01_3444037b.jpg>
+<br>Carly fiorina
+</center>
+</div>
+<div class="col-md-2">
+<center>
+<img src=https://timedotcom.files.wordpress.com/2017/12/bill-gates-inspiring-stories-twitter.jpg>
+<br>Bill Gates
+<img src=https://ia.media-imdb.com/images/M/MV5BMTM0ODU5Nzk2OV5BMl5BanBnXkFtZTcwMzI2ODgyNQ@@._V1_UY317_CR4,0,214,317_AL_.jpg>
+<br>Johnny Depp
+</center>
+</div></div>
+
+<div class="col-md-6">
+<center>
+<div class=result>
+</div>
+<div class=box1>
+<img id=image src=http://reels.syntheticpictures.com/img/directors/blank-avatar.png>
+</div>
+<input id=url type=url placeholder="Enter the image url"/>
+<button id=matchbtn class="btn btn-success">Match</button>
+</center>
+</div>
+</div>
+</body>
+
+<style>
+.result{
+font-size:20px;
+}
+h1{
+color:orange;
+}
+#url{
+width:400px;
+height:50px;
+border-radius:20px;
+font-size:20px;
+border-style:solid;
+border-color:grey;
+border-width:2px;
+}
+
+.box{
+margin:10px;
+}
+.box1 img{
+border-style:solid;
+border-width:3px;
+border-color:orange;
+border-radius:170px;
+height:400px;
+margin:30px 80px 20px 40px;
+
+}
+
+.box img{
+height:200;
+width:150;
+}
+body{
+background-image: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%);
+font-family:"Comic Sans MS";
+}
+img{
+margin:1px;
+}
+#image{
+width:400px;
+height:450px;
+}
+</style>
+
+<script language=JavaScript>
+//alert("something");
+document.getElementById("url").addEventListener("keyup", function(event) {
+  if (event.keyCode === 13) {
+document.getElementById("matchbtn").click();
+  }
+});
+
+$("#matchbtn").click(function(){
+var v=document.getElementById("url").value;
+$("#image").attr("src",v);
+var d=new Date();
+var t1=performance.now();
+var data={
+	image:v,
+	//image:"https://i.kinja-img.com/gawker-media/image/upload/s--cKWc_uZD--/c_scale,f_auto,fl_progressive,q_80,w_800/nuppu1sfrmoarmgaptw1.jpg",	
+	//subject_id:"robert downey jr",
+	gallery_name:"recognize",
+	//face_id:"2e532821560e4ed7a24"
+}
+$.ajax({
+            url: "https://api.kairos.com/recognize",
+            //url:"https://api.kairos.com/gallery/view",
+			beforeSend: function(xhrObj){
+                // Request headers
+                xhrObj.setRequestHeader("Content-Type","application/json");
+                xhrObj.setRequestHeader('app_id', '*******');//change id
+				xhrObj.setRequestHeader('app_key', '*********');//enter key
+            },
+			//crossDomain: true,
+            type: "POST",
+            // Request body
+            data:JSON.stringify(data) 
+        })
+        .done(function(data) {
+            console.log("success");
+			console.log(JSON.stringify(data));
+			if(data.images[0].candidates){	
+				var t2=performance.now();
+				console.log("time taken is "+(t2-t1)+"milliseconds");
+				$(".result").html("The person in the photo is: "+data.images[0].candidates[0].subject_id);
+			}
+			
+			else{
+			$(".result").html("We did not found a significant match");
+			var t2=performance.now();
+			console.log("time taken is "+(t2-t1)+"milliseconds");
+			}
+			
+		})
+        .fail(function() {
+            console.log("error");
+        });
+});    
+/*var request = new XMLHttpRequest();
+
+request.open('POST', 'https://api.kairos.com/enroll?image=%22url%22%3Ahttps%3A%2F%2Ffm.cnbc.com%2Fapplications%2Fcnbc.com%2Fresources%2Fimg%2Feditorial%2F2018%2F05%2F02%2F105178315-Jeff_Bezos_close_up.1910x1000.jpgurces%2Fimg%2Feditorial%2F2018%2F05%2F02%2F105178315-Jeff_Bezos_close_up.1910x1000.jpg&subject_id=%22subject_id%22%3A%22Jeff%20Bezos%22&gallery_name=%22gallery_name%22%3A%22Recognition%22');
+
+request.setRequestHeader('Content-Type', 'application/json');
+request.setRequestHeader('app_id', 'e161ef64');
+request.setRequestHeader('app_key', 'ac356c248d114dc26e16a6a5129c7598');
+
+request.onreadystatechange = function () {
+  if (this.readyState === 4) {
+    console.log('Status:', this.status);
+    console.log('Headers:', this.getAllResponseHeaders());
+    console.log('Body:	', this.responseText);
+  }
+};
+
+var body = {
+  'image': 'https://fm.cnbc.com/applications/cnbc.com/resources/img/editorial/2018/05/02/105178315-Jeff_Bezos_close_up.1910x1000.jpg',
+  'subject_id': 'jeff bezos',
+  'gallery_name': 'recognize'
+};
+request.send(JSON.stringify(body));
+//console.log("this is it");
+*/
+</script>
